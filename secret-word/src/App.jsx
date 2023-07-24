@@ -26,7 +26,13 @@ const [words] = useState(wordList)
 
 const [pegarPalavra, setPegarPalavra] = useState('')
 const [pegarCategoria, setPegarCategoria] = useState('')
+const [letras, setLetras] = useState([])
 const [letrasDigitadas, setLetrasDigitadas] = useState([])
+
+const [LetrasAdvinhadas, setLetrasAdvinhadas] = useState([])
+const [letrasErradas, setLetrasErradas] = useState([])
+const [tentativas, setTentativas] = useState(6)
+const [pontos, setPontos] = useState(0)
 
 const pegaPalavraeCategoria = () =>{
   //pegando uma categoria aleatoria
@@ -50,7 +56,7 @@ const startGame = () => {
   let wordLetters = word.split('')
 
   // passando as letras para minusculas
-  wordLetters = wordLetters.map((letras) => letras.toLowerCase())
+  wordLetters = wordLetters.map((l) => l.toLowerCase())
 
 
   console.log(word, category)
@@ -59,15 +65,35 @@ const startGame = () => {
   //fill state
   setPegarPalavra(word)
   setPegarCategoria(category)
-  setLetrasDigitadas(wordLetters)
+  setLetras(wordLetters)
 
   setGameStage(stages[1].name)
 }
 
 //processa a letra digitada
 
-const verificaLetra = () => {
-  setGameStage(stages[2].name)
+const verificaLetra = (letter) => {
+    const normalizedLetter = letter.toLowerCase()
+
+  //verifica se a letra ja foi digitada
+  if(LetrasAdvinhadas.includes(normalizedLetter) || letrasErradas.includes(normalizedLetter)){
+    return
+  }
+
+  //inclui as letras que o usuario inserir nas erradas ou acertadas.
+  if(letras.includes(normalizedLetter)){
+    setLetrasAdvinhadas((AtualEstadoDasLetras) => [
+      ...AtualEstadoDasLetras,
+      normalizedLetter
+    ])
+  }else{
+    setLetrasErradas((AtualErroDasLetras) => [
+      ...AtualErroDasLetras,
+      normalizedLetter
+    ])
+  };
+  console.log(LetrasAdvinhadas)
+  console.log(letrasErradas)
 }
 
 // REINICIA O JOGO
@@ -79,7 +105,16 @@ const retryGame = () => {
   return (
     <div className='App'>
       {gameStage === 'start' && <InitialWindow startGame={startGame} />}
-      {gameStage === 'playing' && <StartGame verificaLetra={verificaLetra} />}
+      {gameStage === 'playing' && <StartGame 
+      verificaLetra={verificaLetra}
+      pegarPalavra={pegarPalavra}
+      pegarCategoria={pegarCategoria}
+      letras={letras}
+      LetrasAdvinhadas={LetrasAdvinhadas}
+      tentativas={tentativas}
+      pontos={pontos}
+      letrasErradas={letrasErradas}
+      letrasDigitadas={letrasDigitadas} />}
       {gameStage === 'end' && <GameOver retryGame={retryGame} />}
     </div>
   )

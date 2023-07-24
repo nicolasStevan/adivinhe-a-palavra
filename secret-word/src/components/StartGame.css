@@ -46,7 +46,15 @@ button{
     border: 3px solid #000;
     background-color: #fff;
     color: #000;
+    font-weight: bold;
 }
+
+.quadradoBranco{
+    background-color: #fff;
+    color: #fff;
+    border: 3px solid #fff;
+}
+
 .letraContainer{
     margin-bottom: 1.2em;
 }
