@@ -1,5 +1,6 @@
 import './StartGame.css'
 import { useState,useRef } from 'react'
+
 const StartGame = ({
   verificaLetra,
   pegarPalavra,
@@ -9,9 +10,13 @@ const StartGame = ({
   LetrasAdvinhadas,
   pontos,
   letrasErradas,
-  letrasDigitadas}) => {
+  words,
+  letrasDigitadas}
+  ) => {
   
     const [letter, setLetter] = useState('')
+    const [chute, setChute] = useState('')
+    console.log(chute)
     const letterInputRef = useRef(null)
 
     const handleSubmit = (e) => {
@@ -23,6 +28,26 @@ const StartGame = ({
 
       letterInputRef.current.focus()
     }
+
+    const handleChute = (e) => {
+      e.preventDefault()
+      // handleChute2()
+
+      let chute = document.querySelector('.chutepalavra').value
+
+      console.log('teste')
+
+      if(chute === words.length){
+        alert('Parabéns você acertou a palavra')
+      }
+      else{
+        // gameStage = stages[2].name
+        alert('Você errou a palavra')
+      }
+
+    }
+
+
     return (
 
     <div className="game">
@@ -43,10 +68,18 @@ const StartGame = ({
       </div>
       <div className="letraContainer">
         <p>Tente adivinhar uma letra da palavra</p>
+          
+        <form onSubmit={handleChute}>
+          <p>tente chutar uma palavra</p>
+          <input type="text" value={chute} onChange={(e) => setChute(e.target.value)} className='chutepalavra' />
+          <button>Verificar</button>
+          </form>
+
         <form onSubmit={handleSubmit}>
           <input type="text" className="letraInput" maxLength="1" required onChange={(e) => setLetter(e.target.value)} value={letter} ref={letterInputRef}/>
           <button>Verificar</button>
           </form>  
+
       </div>
       <div className="letrasChutadas">
         <p>Letras ja utilizadas:</p>

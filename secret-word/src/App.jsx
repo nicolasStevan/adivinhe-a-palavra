@@ -20,9 +20,11 @@ const stages = [
   {id: 3, name: 'end'},
 ]
 
+const tentativasQtde = 4
+
 function App() {
 const [gameStage, setGameStage] = useState(stages[0].name)
-const [words] = useState(wordList)
+const [words, setWords] = useState(wordList)
 
 const [pegarPalavra, setPegarPalavra] = useState('')
 const [pegarCategoria, setPegarCategoria] = useState('')
@@ -31,10 +33,10 @@ const [letrasDigitadas, setLetrasDigitadas] = useState([])
 
 const [LetrasAdvinhadas, setLetrasAdvinhadas] = useState([])
 const [letrasErradas, setLetrasErradas] = useState([])
-const [tentativas, setTentativas] = useState(6)
+const [tentativas, setTentativas] = useState(tentativasQtde)
 const [pontos, setPontos] = useState(0)
 
-const pegaPalavraeCategoria = () =>{
+const pegaPalavraeCategoria = useCallback(() =>{
   //pegando uma categoria aleatoria
     const categories = Object.keys(words) 
     const category = categories[Math.floor(Math.random() * Object.keys(categories).length)]
@@ -45,10 +47,13 @@ const pegaPalavraeCategoria = () =>{
     console.log(word)
 
     return {word, category}
-}
+},[words])
 
 //iniciando o jogo
-const startGame = () => {
+const startGame = useCallback(() => {
+  //limpa o state das letras
+  limpaStateLetras()
+
   //pega uma palavra e uma categoria
  const {word,category} = pegaPalavraeCategoria()
   
@@ -68,7 +73,7 @@ const startGame = () => {
   setLetras(wordLetters)
 
   setGameStage(stages[1].name)
-}
+}, [pegaPalavraeCategoria])
 
 //processa a letra digitada
 
@@ -91,14 +96,68 @@ const verificaLetra = (letter) => {
       ...AtualErroDasLetras,
       normalizedLetter
     ])
+    setTentativas((AtualTentativas) => AtualTentativas - 1)
   };
-  console.log(LetrasAdvinhadas)
-  console.log(letrasErradas)
+
 }
+const limpaStateLetras = () =>{
+  setLetrasAdvinhadas([])
+  setLetrasErradas([])
+  setWords([])
+}
+
+// const handleChute2 = (word) => {
+//   if(word === pegarPalavra){
+//     setPontos((AtualPontos) => AtualPontos += 100)
+//     startGame()
+//   }else{
+//     setTentativas((AtualTentativas) => AtualTentativas - 1)
+//   }
+// }
+
+//função para chutar a palavra
+// useEffect(() => {
+//     if(letrasDigitadas.length === pegarPalavra.length){
+//       setGameStage(stages[2].name)
+//     }
+// }, [letrasDigitadas, pegarPalavra])
+
+
+//checa se as tentativas tiverem terminado
+  useEffect(() => {
+    if(tentativas <= 0){
+      //função para resetar o jogo reiniciar. os states quando errar as tentativas
+      
+      setGameStage(stages[2].name)
+    }
+  },[tentativas])
+
+//checa se o usuario acertou todas as letras
+  useEffect(() => {
+
+const LetrasUnicas = [...new Set(letras)]
+
+// condição para verificar se o usuario acertou todas as letras
+
+if(LetrasAdvinhadas.length === LetrasUnicas.length){
+  //calcula os pontos
+  setPontos((AtualPontos) => AtualPontos += 100)
+
+  //reincia o jogo 
+  startGame()
+}
+console.log(LetrasUnicas)
+
+},[LetrasAdvinhadas, letras, startGame])
+
 
 // REINICIA O JOGO
 
 const retryGame = () => {
+  setPontos(0)
+  setTentativas(tentativasQtde)
+
+
   setGameStage(stages[0].name)
 }
 
@@ -114,8 +173,9 @@ const retryGame = () => {
       tentativas={tentativas}
       pontos={pontos}
       letrasErradas={letrasErradas}
-      letrasDigitadas={letrasDigitadas} />}
-      {gameStage === 'end' && <GameOver retryGame={retryGame} />}
+      letrasDigitadas={letrasDigitadas}
+      words={words}/>}
+      {gameStage === 'end' && <GameOver retryGame={retryGame} pontos={pontos}  />}
     </div>
   )
 }
