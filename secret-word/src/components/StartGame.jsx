@@ -10,42 +10,34 @@ const StartGame = ({
   LetrasAdvinhadas,
   pontos,
   letrasErradas,
-  words,
   letrasDigitadas}
   ) => {
   
     const [letter, setLetter] = useState('')
     const [chute, setChute] = useState('')
-    console.log(chute)
+   
     const letterInputRef = useRef(null)
 
     const handleSubmit = (e) => {
-      e.preventDefault()
-
-      verificaLetra(letter)
-
-      setLetter('')
-
-      letterInputRef.current.focus()
-    }
-
-    const handleChute = (e) => {
-      e.preventDefault()
-      // handleChute2()
-
-      let chute = document.querySelector('.chutepalavra').value
-
-      console.log('teste')
-
-      if(chute === words.length){
-        alert('Parabéns você acertou a palavra')
+      e.preventDefault();
+    
+      if (letter.length === 1) {
+        verificaLetra(letter);
+      } else if (chute.length > 1) {
+        // Lógica para verificar o chute da palavra
+        if (chute.toLowerCase() === pegarPalavra.toLowerCase()) {
+          // Palavra correta, você pode fazer o que quiser aqui, como aumentar a pontuação
+          console.log('Palavra correta!');
+        } else {
+          // Palavra incorreta, você pode fazer o que quiser aqui, como diminuir tentativas
+          console.log('Palavra incorreta!');
+        }
       }
-      else{
-        // gameStage = stages[2].name
-        alert('Você errou a palavra')
-      }
-
-    }
+    
+      setLetter('');
+      setChute('');
+      letterInputRef.current.focus();
+    };
 
 
     return (
@@ -68,24 +60,34 @@ const StartGame = ({
       </div>
       <div className="letraContainer">
         <p>Tente adivinhar uma letra da palavra</p>
-          
-        <form onSubmit={handleChute}>
-          <p>tente chutar uma palavra</p>
-          <input type="text" value={chute} onChange={(e) => setChute(e.target.value)} className='chutepalavra' />
-          <button>Verificar</button>
+                {/* ... */}
+          <p>Letras digitadas: <b>{letrasErradas.join(', ')}</b></p>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              className="letraInput"
+              maxLength="1"
+              required
+              onChange={(e) => setLetter(e.target.value)}
+              value={letter}
+              ref={letterInputRef}
+            />
+            <button>Verificar</button>
           </form>
+          <p>ou</p>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              className="palavraInput"
+              required
+              onChange={(e) => setChute(e.target.value)}
+              value={chute}
+            />
+            <button>Chutar Palavra</button>
+          </form>
+          {/* ... */}
 
-        <form onSubmit={handleSubmit}>
-          <input type="text" className="letraInput" maxLength="1" required onChange={(e) => setLetter(e.target.value)} value={letter} ref={letterInputRef}/>
-          <button>Verificar</button>
-          </form>  
 
-      </div>
-      <div className="letrasChutadas">
-        <p>Letras ja utilizadas:</p>
-       {letrasErradas.map((letras, index) => (
-          <span key={index}>{letras}, </span>       
-       ))}
       </div>
     </div>
   )

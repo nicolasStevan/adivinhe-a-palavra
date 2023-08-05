@@ -24,7 +24,7 @@ const tentativasQtde = 4
 
 function App() {
 const [gameStage, setGameStage] = useState(stages[0].name)
-const [words, setWords] = useState(wordList)
+const [words] = useState(wordList)
 
 const [pegarPalavra, setPegarPalavra] = useState('')
 const [pegarCategoria, setPegarCategoria] = useState('')
@@ -103,25 +103,7 @@ const verificaLetra = (letter) => {
 const limpaStateLetras = () =>{
   setLetrasAdvinhadas([])
   setLetrasErradas([])
-  setWords([])
 }
-
-// const handleChute2 = (word) => {
-//   if(word === pegarPalavra){
-//     setPontos((AtualPontos) => AtualPontos += 100)
-//     startGame()
-//   }else{
-//     setTentativas((AtualTentativas) => AtualTentativas - 1)
-//   }
-// }
-
-//função para chutar a palavra
-// useEffect(() => {
-//     if(letrasDigitadas.length === pegarPalavra.length){
-//       setGameStage(stages[2].name)
-//     }
-// }, [letrasDigitadas, pegarPalavra])
-
 
 //checa se as tentativas tiverem terminado
   useEffect(() => {
@@ -133,13 +115,13 @@ const limpaStateLetras = () =>{
   },[tentativas])
 
 //checa se o usuario acertou todas as letras
-  useEffect(() => {
 
-const LetrasUnicas = [...new Set(letras)]
+const checkWin = (text) => {
+  const LetrasUnicas = [...new Set(letras)]
 
-// condição para verificar se o usuario acertou todas as letras
+  // condição para verificar se o usuario acertou todas as letras
 
-if(LetrasAdvinhadas.length === LetrasUnicas.length){
+  if(LetrasAdvinhadas.length === LetrasUnicas.length){
   //calcula os pontos
   setPontos((AtualPontos) => AtualPontos += 100)
 
@@ -147,6 +129,11 @@ if(LetrasAdvinhadas.length === LetrasUnicas.length){
   startGame()
 }
 console.log(LetrasUnicas)
+}
+
+useEffect(() => {
+
+checkWin()
 
 },[LetrasAdvinhadas, letras, startGame])
 
@@ -174,7 +161,7 @@ const retryGame = () => {
       pontos={pontos}
       letrasErradas={letrasErradas}
       letrasDigitadas={letrasDigitadas}
-      words={words}/>}
+      checkWin={checkWin} />}
       {gameStage === 'end' && <GameOver retryGame={retryGame} pontos={pontos}  />}
     </div>
   )
