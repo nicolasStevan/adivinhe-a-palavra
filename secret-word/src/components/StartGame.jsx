@@ -1,5 +1,5 @@
 import './StartGame.css'
-import { useState,useRef } from 'react'
+import { useState,useRef,useCallback } from 'react'
 
 const StartGame = ({
   verificaLetra,
@@ -10,12 +10,12 @@ const StartGame = ({
   LetrasAdvinhadas,
   pontos,
   letrasErradas,
+  handleChutePalavra,
   letrasDigitadas}
   ) => {
   
     const [letter, setLetter] = useState('')
     const [chute, setChute] = useState('')
-   
     const letterInputRef = useRef(null)
 
     const handleSubmit = (e) => {
@@ -27,18 +27,18 @@ const StartGame = ({
         // Lógica para verificar o chute da palavra
         if (chute.toLowerCase() === pegarPalavra.toLowerCase()) {
           // Palavra correta, você pode fazer o que quiser aqui, como aumentar a pontuação
-          console.log('Palavra correta!');
+          alert('Palavra correta!');
+          handleChutePalavra();
+          return;
         } else {
           // Palavra incorreta, você pode fazer o que quiser aqui, como diminuir tentativas
           console.log('Palavra incorreta!');
         }
       }
-    
       setLetter('');
       setChute('');
       letterInputRef.current.focus();
     };
-
 
     return (
 
@@ -60,7 +60,7 @@ const StartGame = ({
       </div>
       <div className="letraContainer">
         <p>Tente adivinhar uma letra da palavra</p>
-                {/* ... */}
+                
           <p>Letras digitadas: <b>{letrasErradas.join(', ')}</b></p>
           <form onSubmit={handleSubmit}>
             <input
@@ -85,7 +85,7 @@ const StartGame = ({
             />
             <button>Chutar Palavra</button>
           </form>
-          {/* ... */}
+          
 
 
       </div>

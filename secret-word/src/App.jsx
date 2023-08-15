@@ -20,7 +20,7 @@ const stages = [
   {id: 3, name: 'end'},
 ]
 
-const tentativasQtde = 4
+const tentativasQtde = 3
 
 function App() {
 const [gameStage, setGameStage] = useState(stages[0].name)
@@ -116,20 +116,27 @@ const limpaStateLetras = () =>{
 
 //checa se o usuario acertou todas as letras
 
+
+const handleChutePalavra = () =>{
+  setPontos((pontos => pontos += 100))
+  startGame()
+}
+
 const checkWin = (text) => {
-  const LetrasUnicas = [...new Set(letras)]
+  // const LetrasUnicas = [...new Set(letras)]
 
   // condição para verificar se o usuario acertou todas as letras
 
-  if(LetrasAdvinhadas.length === LetrasUnicas.length){
+  if(LetrasAdvinhadas.length === letras.length){
   //calcula os pontos
   setPontos((AtualPontos) => AtualPontos += 100)
 
   //reincia o jogo 
   startGame()
 }
-console.log(LetrasUnicas)
+console.log(letras)
 }
+
 
 useEffect(() => {
 
@@ -161,7 +168,9 @@ const retryGame = () => {
       pontos={pontos}
       letrasErradas={letrasErradas}
       letrasDigitadas={letrasDigitadas}
-      checkWin={checkWin} />}
+      checkWin={checkWin}
+      handleChutePalavra={handleChutePalavra}
+      />}
       {gameStage === 'end' && <GameOver retryGame={retryGame} pontos={pontos}  />}
     </div>
   )
